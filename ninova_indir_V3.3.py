@@ -5,6 +5,7 @@ sifre = None
 
 import subprocess
 import os
+import getpass
 
 try:
     import requests
@@ -28,7 +29,7 @@ class Ninova:
     def __init__(self, kadi, sifre):
         self.kadi = kadi
         self.sifre = sifre
-        self.file_path = os.path.dirname(os.path.abspath(__file__))+"\\"
+        self.file_path = os.path.dirname(os.path.abspath(__file__))+"/"
         self.indirme_sayisi = 0
         self.file_types = [".jpg",".jpeg",".pdf",".docx",".mp4",".mp3",".avi",".exe",".txt",".doc",".xls",".xlsx",".rar",".zip",".csv",".html",".ppt",".pptx",".sh"]
         self.forbidden_chars = r'[<>:"/\\|?*]'
@@ -167,7 +168,7 @@ class Ninova:
                     self.indirme_sayisi += 1
                     print("Dosya indiriliyor:",file[2])
                     url = url
-                    with open(folder_path+"/"+file[2], "w") as file:
+                    with open(self.file_path+folder_path+"/"+file[2], "w") as file:
                         file.write("[InternetShortcut]\n")
                         file.write(f"URL={url}\n")
                 else:
@@ -175,13 +176,13 @@ class Ninova:
                         self.indirme_sayisi += 1
                         r = self.req.get(url)
                         print("Dosya indiriliyor:",file[2])
-                        with open(folder_path+"/"+file[2], "wb") as file:
+                        with open(self.file_path+folder_path+"/"+file[2], "wb") as file:
                             file.write(r.content)
                     else:
                         self.indirme_sayisi += 1
                         r = self.req.get(url)
                         print("Dosya indiriliyor:",file[2])
-                        with open(folder_path+"/"+file[2], "wb") as file:
+                        with open(self.file_path+folder_path+"/"+file[2], "wb") as file:
                             file.write(r.content)
 
     def get_files(self, url):
@@ -281,8 +282,8 @@ class Ninova:
     
     def save_user_data(self):
         file_name = os.path.basename(__file__)
-
-        with open(file_name, "r") as file:
+        file_path = self.file_path+file_name
+        with open(file_path, "r") as file:
             code = file.read()
         code = code.replace("kullanici_adi = None", f"kullanici_adi = '{kullanici_adi}'",1)
         code = code.replace("sifre = None", f"sifre = '{sifre}'",1)
@@ -303,7 +304,7 @@ class Ninova:
 if __name__ == "__main__":
     if kullanici_adi is None or sifre is None:
         kullanici_adi = input("Kullanici adinizi girin: ")
-        sifre = input("Sifrenizi girin: ")
+        sifre = getpass.getpass("Sifrenizi girin: ")
         save_input = input("Kullanici adi ve sifre kaydedilsin mi? (Y/N): ").upper()
 
     ninova = Ninova(kullanici_adi, sifre)
